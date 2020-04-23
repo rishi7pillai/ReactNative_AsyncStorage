@@ -1,0 +1,70 @@
+import React from 'react';
+import { TextInput,Appbar} from 'react-native-paper';
+import { StyleSheet, Text, View,Button, ToastAndroid,AsyncStorage } from 'react-native';
+
+
+
+class App extends React.Component{
+  state={
+    item:'loading...'
+  }
+
+  storeData = async () => {
+    try {
+      await AsyncStorage.setItem('mykey', 'I like it.');
+      this.setState({
+        item:await AsyncStorage.getItem('mykey')
+      })
+
+    } catch (error) {
+       console.log(error)
+    }
+    console.log(this.state)
+  };
+
+ async componentDidMount(){
+    this.setState({
+      item:await AsyncStorage.getItem('mykey')
+    })
+  }
+
+  deleteData = async () => {
+    try {
+      AsyncStorage.removeItem('mykey',async()=>{
+        console.log('deleted')
+        this.setState({
+          item:await AsyncStorage.getItem('mykey')
+        })        
+      })
+    } catch (error) {
+      console.log(error)
+    }
+    console.log(this.state)
+  };
+
+   render()
+   {
+      return (    
+        <View style={styles.container}>
+          <Text style={styles.data}>Hello</Text>
+          <Button  title="Click Me" onPress={this.storeData}/>
+          <Text style={styles.data}>{this.state.item}</Text>
+          <Button  title="Delete Me" onPress={this.deleteData}/>
+        </View>
+      );
+   }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    fontSize:30,
+    flex: 1,
+    backgroundColor: '#fff',
+    
+  },
+  data: {
+    fontSize:30,
+    textAlign:"center",
+  },
+});
+export default App;
